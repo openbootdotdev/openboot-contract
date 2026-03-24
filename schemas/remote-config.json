@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openboot.dev/schemas/remote-config.json",
+  "title": "RemoteConfig",
+  "description": "Response from GET /:username/:slug/config — the config JSON that CLI consumes.",
+  "type": "object",
+  "required": ["username", "slug", "name", "packages", "casks", "taps", "npm", "dotfiles_repo", "post_install"],
+  "properties": {
+    "username": { "type": "string" },
+    "slug": { "type": "string" },
+    "name": { "type": "string" },
+    "preset": { "type": "string" },
+    "packages": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/packageEntry" },
+      "description": "Homebrew formulae"
+    },
+    "casks": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/packageEntry" },
+      "description": "Homebrew casks (GUI apps)"
+    },
+    "taps": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Homebrew taps (plain strings, e.g. 'homebrew/cask-fonts')"
+    },
+    "npm": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/packageEntry" },
+      "description": "npm global packages"
+    },
+    "dotfiles_repo": { "type": "string" },
+    "post_install": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "shell": {
+      "oneOf": [
+        { "$ref": "#/$defs/shellConfig" },
+        { "type": "null" }
+      ]
+    },
+    "macos_prefs": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": { "$ref": "#/$defs/macOSPref" }
+        },
+        { "type": "null" }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "packageEntry": {
+      "type": "object",
+      "required": ["name", "desc"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "desc": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "shellConfig": {
+      "type": "object",
+      "properties": {
+        "oh_my_zsh": { "type": "boolean" },
+        "theme": { "type": "string" },
+        "plugins": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "macOSPref": {
+      "type": "object",
+      "required": ["domain", "key", "value"],
+      "properties": {
+        "domain": { "type": "string" },
+        "key": { "type": "string" },
+        "type": { "type": "string", "enum": ["", "string", "int", "bool", "float"] },
+        "value": { "type": "string" },
+        "desc": { "type": "string" }
+      }
+    }
+  }
+}

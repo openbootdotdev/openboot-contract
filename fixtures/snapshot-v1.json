@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "captured_at": "2026-03-25T10:00:00Z",
+  "hostname": "test-mac",
+  "packages": {
+    "formulae": ["git", "curl", "jq", "node", "go"],
+    "casks": ["visual-studio-code", "docker", "warp"],
+    "taps": ["homebrew/cask-fonts", "openbootdotdev/tap"],
+    "npm": ["typescript", "eslint", "prettier"]
+  },
+  "macos_prefs": [
+    {
+      "domain": "com.apple.dock",
+      "key": "autohide",
+      "type": "bool",
+      "value": "true",
+      "desc": "Auto-hide the Dock"
+    },
+    {
+      "domain": "NSGlobalDomain",
+      "key": "AppleShowScrollBars",
+      "type": "string",
+      "value": "Always",
+      "desc": ""
+    }
+  ],
+  "git": {
+    "user_name": "Test User",
+    "user_email": "test@example.com"
+  },
+  "dotfiles": {
+    "repo_url": "https://github.com/testuser/dotfiles"
+  },
+  "dev_tools": [
+    { "name": "go", "version": "1.24.0" },
+    { "name": "node", "version": "22.0.0" }
+  ],
+  "matched_preset": "developer",
+  "catalog_match": {
+    "matched": ["git", "curl", "jq"],
+    "unmatched": ["custom-tool"],
+    "match_rate": 0.75
+  },
+  "health": {
+    "failed_steps": [],
+    "partial": false
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "username": "testuser",
+  "slug": "dev-setup",
+  "name": "Developer Setup",
+  "preset": "developer",
+  "packages": [
+    { "name": "git", "desc": "Distributed version control system" },
+    { "name": "curl", "desc": "Transfer data with URLs" },
+    { "name": "jq", "desc": "JSON processor for command line" },
+    { "name": "homebrew/cask-fonts/font-fira-code", "desc": "Fira Code font" }
+  ],
+  "casks": [
+    { "name": "visual-studio-code", "desc": "Code editor with extensions and debugging" },
+    { "name": "docker", "desc": "Platform for building and running containers" }
+  ],
+  "taps": [
+    "homebrew/cask-fonts"
+  ],
+  "npm": [
+    { "name": "typescript", "desc": "Typed superset of JavaScript" },
+    { "name": "eslint", "desc": "Linter for JavaScript and TypeScript" }
+  ],
+  "dotfiles_repo": "https://github.com/testuser/dotfiles",
+  "post_install": [
+    "echo 'Setup complete!'",
+    "mkdir -p ~/projects"
+  ],
+  "shell": {
+    "oh_my_zsh": true,
+    "theme": "robbyrussell",
+    "plugins": ["git", "zsh-autosuggestions"]
+  },
+  "macos_prefs": [
+    {
+      "domain": "com.apple.dock",
+      "key": "autohide",
+      "type": "bool",
+      "value": "true",
+      "desc": "Auto-hide the Dock"
+    }
+  ]
+}

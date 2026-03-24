@@ -1,0 +1,76 @@
+name: Validate Contract
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate-schemas:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install jsonschema
+        run: pip install jsonschema
+
+      - name: Validate fixtures against schemas
+        run: |
+          python3 -c "
+          import json, jsonschema, sys
+
+          checks = [
+            ('schemas/remote-config.json', 'fixtures/config-v1.json'),
+            ('schemas/snapshot.json', 'fixtures/snapshot-v1.json'),
+          ]
+
+          failed = 0
+          for schema_path, fixture_path in checks:
+            schema = json.load(open(schema_path))
+            data = json.load(open(fixture_path))
+            try:
+              jsonschema.validate(data, schema)
+              print(f'  ✓ {fixture_path} matches {schema_path}')
+            except jsonschema.ValidationError as e:
+              print(f'  ✗ {fixture_path}: {e.message}')
+              failed += 1
+
+          sys.exit(1 if failed else 0)
+          "
+
+      - name: Validate schema files are valid JSON Schema
+        run: |
+          python3 -c "
+          import json, glob, sys
+          failed = 0
+          for f in glob.glob('schemas/*.json'):
+            try:
+              schema = json.load(open(f))
+              assert '\$schema' in schema, 'missing \$schema'
+              print(f'  ✓ {f} is valid')
+            except Exception as e:
+              print(f'  ✗ {f}: {e}')
+              failed += 1
+          sys.exit(1 if failed else 0)
+          "
+
+  notify-consumers:
+    needs: validate-schemas
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        repo: [openboot, openboot.dev]
+    steps:
+      - name: Trigger consumer CI
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.CONTRACT_DISPATCH_TOKEN }}
+          repository: openbootdotdev/${{ matrix.repo }}
+          event-type: contract-updated
+          client-payload: '{"ref": "${{ github.sha }}"}'

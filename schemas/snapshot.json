@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openboot.dev/schemas/snapshot.json",
+  "title": "Snapshot",
+  "description": "System snapshot captured by CLI, uploaded to Server via POST /api/configs/from-snapshot.",
+  "type": "object",
+  "required": ["version", "captured_at", "packages"],
+  "properties": {
+    "version": { "type": "integer", "const": 1 },
+    "captured_at": { "type": "string", "format": "date-time" },
+    "hostname": { "type": "string" },
+    "packages": { "$ref": "#/$defs/packageSnapshot" },
+    "macos_prefs": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/macOSPref" }
+    },
+    "git": { "$ref": "#/$defs/gitSnapshot" },
+    "dotfiles": { "$ref": "#/$defs/dotfilesSnapshot" },
+    "dev_tools": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/devTool" }
+    },
+    "matched_preset": { "type": "string" },
+    "catalog_match": { "$ref": "#/$defs/catalogMatch" },
+    "health": { "$ref": "#/$defs/captureHealth" }
+  },
+  "$defs": {
+    "packageSnapshot": {
+      "type": "object",
+      "description": "Canonical format: plain string arrays. This is the only format the server accepts.",
+      "required": ["formulae", "casks", "taps", "npm"],
+      "properties": {
+        "formulae": { "type": "array", "items": { "type": "string" } },
+        "casks": { "type": "array", "items": { "type": "string" } },
+        "taps": { "type": "array", "items": { "type": "string" } },
+        "npm": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "macOSPref": {
+      "type": "object",
+      "required": ["domain", "key", "value"],
+      "properties": {
+        "domain": { "type": "string" },
+        "key": { "type": "string" },
+        "type": { "type": "string" },
+        "value": { "type": "string" },
+        "desc": { "type": "string" }
+      }
+    },
+    "gitSnapshot": {
+      "type": "object",
+      "properties": {
+        "user_name": { "type": "string" },
+        "user_email": { "type": "string" }
+      }
+    },
+    "dotfilesSnapshot": {
+      "type": "object",
+      "properties": {
+        "repo_url": { "type": "string" }
+      }
+    },
+    "devTool": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": "string" }
+      }
+    },
+    "catalogMatch": {
+      "type": "object",
+      "properties": {
+        "matched": { "type": "array", "items": { "type": "string" } },
+        "unmatched": { "type": "array", "items": { "type": "string" } },
+        "match_rate": { "type": "number" }
+      }
+    },
+    "captureHealth": {
+      "type": "object",
+      "properties": {
+        "failed_steps": { "type": "array", "items": { "type": "string" } },
+        "partial": { "type": "boolean" }
+      }
+    }
+  }
+}
