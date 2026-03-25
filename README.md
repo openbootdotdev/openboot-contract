@@ -20,7 +20,8 @@ fixtures/         Example payloads that match the schemas
   snapshot-v1.json
 
 golden-path/      End-to-end validation scripts
-  test.sh               Round-trip integrity + live API checks
+  test.sh               Full golden path: curl|bash + CLI dry-run + doctor (5 steps)
+  contract-smoke.sh     Schema validation + live API format checks only
 ```
 
 ## How it works
@@ -33,12 +34,22 @@ golden-path/      End-to-end validation scripts
 ## Local usage
 
 ```bash
-# Validate fixtures against schemas (needs python3 + jsonschema)
-pip install jsonschema
+# Prerequisites
+pip install jsonschema          # for schema validation
+cd ../openboot && make build    # build the CLI binary
+
+# Full golden path (curl|bash + CLI dry-run + doctor)
+# Spins up a mock server automatically
 ./golden-path/test.sh
 
-# With a running server
+# Schema + API format checks only
+./golden-path/contract-smoke.sh
+
+# Against a running local server
 SERVER_URL=http://localhost:5173 ./golden-path/test.sh
+
+# Against production
+SERVER_URL=https://openboot.dev ./golden-path/contract-smoke.sh
 ```
 
 ## Rules
